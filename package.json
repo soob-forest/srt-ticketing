@@ -1,0 +1,17 @@
+{
+  "name": "srt-ticket-auto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chromedriver": "^135.0.1",
+    "node-notifier": "^10.0.1",
+    "play-sound": "^1.1.6",
+    "selenium-webdriver": "^4.31.0"
+  }
+}
