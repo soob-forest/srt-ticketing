@@ -29,7 +29,7 @@ const service = new chrome.ServiceBuilder(path.resolve("./chromedriver.exe"));
     await selectOptionByText(driver, "dptRsStnCd", departureStation);
     await selectOptionByText(driver, "arvRsStnCd", arrivaltStation);
 
-    const date = "2025.04.29";
+    const date = "2025.04.19";
     await driver.executeScript(
       `document.querySelector("input[name=\'dptDt\']").value = "${date}";`
     );
@@ -43,9 +43,10 @@ const service = new chrome.ServiceBuilder(path.resolve("./chromedriver.exe"));
 
     await driver.findElement(By.css("a.btn_burgundy_dark2")).click();
 
-    wait(1000);
+    await driver.sleep(1000)
+    
 
-    const betweenTimes = ["10:00", "12:50"];
+    const betweenTimes = ["10:00", "10:50"];
 
     let isSuccess = false;
 
@@ -58,9 +59,17 @@ const service = new chrome.ServiceBuilder(path.resolve("./chromedriver.exe"));
       }
 
       await driver.navigate().refresh();
-      isSuccess = await bookTrainIfAvailable(driver, betweenTimes);
+      await driver.sleep(1000)
+      const result = await bookTrainIfAvailable(driver, betweenTimes);
 
-      await wait(1000);
+      if (result === "RESTART") {
+        console.log("🔄 페이지 초기화 신호 수신! 로그인부터 다시 시도");
+        await driver.quit();
+        return await example(); // 전체 함수 다시 실행 (재귀 호출)
+      }
+      isSuccess = result === true;
+
+      
     }
 
     for (let i = 0; i < 10; i++) {
@@ -103,6 +112,11 @@ async function bookTrainIfAvailable(driver, departureTimeRange) {
 
   // 테이블에서 각 행을 반복하여, 출발역과 시간을 확인
   let rows = await driver.findElements(By.css("table tbody tr"));
+
+  if (rows.length === 0) {
+    console.warn("⚠️ 열차 목록이 없음! 초기화 필요.");
+    return "RESTART";
+  }
 
   for (let row of rows) {
     // 각 행에서 출발역과 출발시간을 찾음
