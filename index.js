@@ -29,13 +29,13 @@ const service = new chrome.ServiceBuilder(path.resolve("./chromedriver.exe"));
     await selectOptionByText(driver, "dptRsStnCd", departureStation);
     await selectOptionByText(driver, "arvRsStnCd", arrivaltStation);
 
-    const date = "2025.04.19";
+    const date = "2025.04.24";
     await driver.executeScript(
       `document.querySelector("input[name=\'dptDt\']").value = "${date}";`
     );
 
     // time 은 00 ~ 22 사이
-    const time = "10";
+    const time = "06";
 
     await driver
       .findElement(By.css(`#dptTm option[value="${time + "0000"}"]`))
@@ -43,10 +43,10 @@ const service = new chrome.ServiceBuilder(path.resolve("./chromedriver.exe"));
 
     await driver.findElement(By.css("a.btn_burgundy_dark2")).click();
 
-    await driver.sleep(1000)
+    await driver.sleep(10000)
     
 
-    const betweenTimes = ["10:00", "10:50"];
+    const betweenTimes = ["07:00", "09:10"];
 
     let isSuccess = false;
 
